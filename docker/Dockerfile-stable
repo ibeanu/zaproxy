@@ -39,7 +39,7 @@ USER zap
 
 RUN mkdir /home/zap/.vnc
 
-# Download and expand the latest stable release 
+# Download and expand the latest stable release
 RUN curl -s https://raw.githubusercontent.com/zaproxy/zap-admin/master/ZapVersions.xml | xmlstarlet sel -t -v //url |grep -i Linux | wget -nv --content-disposition -i - -O - | tar zxv && \
 	cp -R ZAP*/* . &&  \
 	rm -R ZAP* && \
@@ -70,12 +70,17 @@ COPY .xinitrc /home/zap/
 #Copy doesn't respect USER directives so we need to chown and to do that we need to be root
 USER root
 
-RUN chown zap:zap /zap/zap-x.sh && \
-	chown zap:zap /zap/zap-baseline.py && \
-	chown zap:zap /zap/zap-webswing.sh && \
-	chown zap:zap /zap/webswing/webswing.config && \
-	chown zap:zap -R /home/zap/.ZAP/ && \
-	chown zap:zap /home/zap/.xinitrc && \
+RUN chown zap:root /zap/zap-x.sh && \
+	chown zap:root /zap/zap-baseline.py && \
+	chown zap:root /zap/zap-webswing.sh && \
+	chown zap:root /zap/webswing/webswing.config && \
+	chown -R zap:root /home/zap/.ZAP/ && \
+	chown zap:root /home/zap/.xinitrc && \
+	chown -R zap:root /zap && \
+	mkdir -p /zap/?/.ZAP && \
+	chmod -R g+wr /zap && \
+	chown -R zap:root /home/zap && \
+	chmod -R g+wr /home/zap && \
 	chmod a+x /home/zap/.xinitrc
 
 #Change back to zap at the end
